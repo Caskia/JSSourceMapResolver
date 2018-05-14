@@ -1,0 +1,29 @@
+
+html,body{
+    margin: 0;
+    padding: 0;
+}
+
+.coin-item{
+    display: block;
+    background: #fff;
+    &.up{
+        animation:up .5s;
+    }
+
+    &.down{
+        animation:down .5s;
+    }
+}
+
+@keyframes up
+{
+    from { background: rgba(255,0,0,.8) }
+    to { background: rgba(255,0,0,0) }
+}
+
+@keyframes down
+{
+    from { background: rgba(0,255,0,.8) }
+    to { background: rgba(0,255,0,0) }
+}

@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules\\typescript\\lib",
+		"javascript-test-runner.additionalArgs":"--require ts-node/register",
+		"unit.test.mocha" : {
+			"glob": "__tests__/**/*.ts",
+			"opts": "__tests__/mocha.opts",
+			"mochaPath": "node_module/mocha"
+		},
+		"unit.test.watchInterval" : 3000,
+		"unit.test.enableCodeLens" : true,
+		"unit.test.enable" : true
+	}
+}
