@@ -10,7 +10,7 @@
     "build": "npm run clean &&cross-env NODE_ENV=production npm run compile",
     "start": "cross-env NODE_ENV=production node build/scripts/start",
     "dev": "cross-env NODE_ENV=development node build/scripts/start",
-    "dev:win": "electron .",
+    "dev:desktop": "electron .",
     "package": "electron-packager ."
   },
   "dependencies": {
