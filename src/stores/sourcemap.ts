@@ -48,15 +48,17 @@ export class SourceMapState {
         this.message=message;
         this.loading=true;
         var positionStrs = message.match(/@\d+:\d+/g);
-        for(let positionStr of positionStrs){
-            var str=positionStr.substring(1);
-            var info=str.split(':');
-            var line= +info[0],
-                column= +info[1];
-            var mappedPosition = await SourceMapConsumer.with(this.__raw_source_map__, null, consumer => {
-                return consumer.originalPositionFor({line,column});
-            });
-            this.stack.push(`${mappedPosition.name}@${mappedPosition.source}:${mappedPosition.line},${mappedPosition.column}`)
+        if(positionStrs){
+            for(let positionStr of positionStrs){
+                var str=positionStr.substring(1);
+                var info=str.split(':');
+                var line= +info[0],
+                    column= +info[1];
+                var mappedPosition = await SourceMapConsumer.with(this.__raw_source_map__, null, consumer => {
+                    return consumer.originalPositionFor({line,column});
+                });
+                this.stack.push(`${mappedPosition.name}@${mappedPosition.source}:${mappedPosition.line},${mappedPosition.column}`)
+            }
         }
         this.loading=false;
     }
