@@ -2,13 +2,16 @@
   "name": "jssourcemapresolver",
   "version": "0.0.1",
   "private": true,
+  "main": "main.js",
   "scripts": {
     "test": "mocha",
     "compile": "cross-env node build/scripts/compile",
     "clean": "rimraf dist",
     "build": "npm run clean &&cross-env NODE_ENV=production npm run compile",
     "start": "cross-env NODE_ENV=production node build/scripts/start",
-    "dev": "cross-env NODE_ENV=development node build/scripts/start"
+    "dev": "cross-env NODE_ENV=development node build/scripts/start",
+    "dev:win": "electron .",
+    "package": "electron-packager ."
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -36,6 +39,8 @@
     "chalk": "^2.3.2",
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",
+    "electron": "^2.0.5",
+    "electron-packager": "^12.1.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "figures": "^2.0.0",
     "file-loader": "^1.1.11",

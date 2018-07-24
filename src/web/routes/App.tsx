@@ -1,6 +1,6 @@
 import * as React from 'react';
 import AppState, { AppStatus } from '../../stores/app';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { di } from 'jsmodules';
 import { observer } from 'mobx-react';
 import { renderRoutes } from 'react-router-config';
