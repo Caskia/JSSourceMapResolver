@@ -1,6 +1,6 @@
 import { di } from 'jsmodules';
 import * as React from 'react';
-import { Upload, Form, Row, Col, InputNumber, Button, Icon, Select, Radio } from 'antd';
+import { Upload, Form, Row, Col, Input, Button,Select, message } from 'antd';
 import { SourceMapState } from '../../../stores/sourcemap';
 import { observer } from 'mobx-react';
 const Option = Select.Option;
@@ -17,11 +17,15 @@ class SourceMapForm extends React.Component<any, any> {
 
     handleOnSumbit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(async (err, values) => {
             if (!err) {
-                this.sourcemap.setLine(values.line);
-                this.sourcemap.setColumn(values.column);
-                this.sourcemap.resolve();
+                try{
+                    var error = values.error;
+                    await this.sourcemap.resolve(error);
+                }
+                catch(ex){
+                    message.error(ex.message);
+                }
             }
         });
     }
@@ -36,11 +40,11 @@ class SourceMapForm extends React.Component<any, any> {
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
-                sm: { span: 8 },
+                sm: { span: 24 },
             },
             wrapperCol: {
                 xs: { span: 24 },
-                sm: { span: 16 },
+                sm: { span: 24 },
             },
         };
 
@@ -61,15 +65,15 @@ class SourceMapForm extends React.Component<any, any> {
         };
 
         return (
-            <Form onSubmit={this.handleOnSumbit}>
+            <Form onSubmit={this.handleOnSumbit} layout={"vertical"}>
                 <Row>
-                    <Col span={8}>
+                    <Col span={24}>
                         <FormItem label="SourceMapFile" {...formItemLayout}>
                             <Select value={this.sourcemap.selected_file_name} onSelect={this.handleOnSelect}>
                                 {
                                     this.sourcemap.file_names.map(file_name => {
                                         return <Option value={file_name} key={file_name} >
-                                            <Row>
+                                            <Row style={{width:"100%"}}>
                                                 <Col span={20} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                     <span>{file_name}</span>
                                                 </Col>
@@ -92,17 +96,12 @@ class SourceMapForm extends React.Component<any, any> {
                             </Select>
                         </FormItem>
                     </Col>
-                    <Col span={8}>
-                        <FormItem label="Line" {...formItemLayout}>
-                            {getFieldDecorator('line', { initialValue: 0 })(
-                                <InputNumber min={0} />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col span={8}>
-                        <FormItem label="Column" {...formItemLayout}>
-                            {getFieldDecorator('column', { initialValue: 0 })(
-                                <InputNumber min={0} />
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <FormItem label="Raw Error" {...formItemLayout}>
+                            {getFieldDecorator('error', { initialValue: 0 })(
+                                <Input.TextArea rows={5} />
                             )}
                         </FormItem>
                     </Col>

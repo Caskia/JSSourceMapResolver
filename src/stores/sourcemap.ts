@@ -21,50 +21,44 @@ export class SourceMapState {
 
     @observable selected_file_name: string;
 
-    @observable result: string;
+    @observable message: string;
+
+    @observable stack:Array<string>=[];
 
     @observable file_names: Array<string> = [];
+
+    @observable loading=false;
 
     constructor() {
         this.init();
     }
-
-    setLine(line: number) {
-        if (_.isNumber(line) && line >= 0) {
-            this.__line__ = line;
-        }
-        else {
-            throw new Error('property line need number');
-        }
-    }
-
-    setColumn(column: number) {
-        if (_.isNumber(column) && column >= 0) {
-            this.__column__ = column
-        }
-        else {
-            throw new Error('property column need number');
-        }
-    }
-
-    async resolve() {
+    async resolve(message:string) {
         if (!this.selected_file_name) {
             throw new Error('need select file');
         }
-        this.__raw_source_map__ = await this.kvStorage.getAsync(this.selected_file_name);
+        if(message==""){
+            throw new Error('message is required ');
+        }
 
+        this.__raw_source_map__ = await this.kvStorage.getAsync(this.selected_file_name);
         if (!this.__raw_source_map__) {
             throw new Error('need load source map file first');
         }
-
-        var mappedPosition = await SourceMapConsumer.with(this.__raw_source_map__, null, consumer => {
-            return consumer.originalPositionFor({
-                line: this.__line__,
-                column: this.__column__
+        this.stack=[];
+        this.message=message;
+        this.loading=true;
+        var positionStrs = message.match(/@\d+:\d+/g);
+        for(let positionStr of positionStrs){
+            var str=positionStr.substring(1);
+            var info=str.split(':');
+            var line= +info[0],
+                column= +info[1];
+            var mappedPosition = await SourceMapConsumer.with(this.__raw_source_map__, null, consumer => {
+                return consumer.originalPositionFor({line,column});
             });
-        });
-
-        this.result = `source: ${mappedPosition.source}\r\nname: ${mappedPosition.name}\r\nline: ${mappedPosition.line}\r\ncolumn: ${mappedPosition.column}`;
+            this.stack.push(`${mappedPosition.name}@${mappedPosition.source}:${mappedPosition.line},${mappedPosition.column}`)
+        }
+        this.loading=false;
     }
 
     async saveFileContent(fileName: string, content: string) {
